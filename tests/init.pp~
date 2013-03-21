@@ -1,3 +1,0 @@
-class { 'gitolite': 
-  admin_pub_key => 'xxx',
-}
