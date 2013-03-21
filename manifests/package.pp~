@@ -1,0 +1,26 @@
+class gitolite::package (
+  $path,
+  $user,
+  $group = $user,
+  $admin_pub_key
+) {
+
+  $preseed = $gitolite::package::params::preseed
+ 
+  file { $path: ensure => directory, }
+
+  file { 'gitolite::package preseed':
+    path => $preseed,
+    owner => 'root',
+    group => 'root',
+    mode => '0600',
+    content => template('gitolite/Ubuntu/gitolite.pressed.erb'),
+  }
+
+  package { $gitolite::params::package:
+    ensure => present,
+    responsefile => $preseed,
+    require => File[$preseed],
+  }
+
+}
