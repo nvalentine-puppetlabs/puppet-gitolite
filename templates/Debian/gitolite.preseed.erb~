@@ -1,4 +1,0 @@
-# System username for gitolite:
-gitolite	gitolite/gituser	string	<%= @user %>
-gitolite	gitolite/adminkey	string	<%= @admin_pub_key %>
-gitolite	gitolite/gitdir	string	<%= @path %>
