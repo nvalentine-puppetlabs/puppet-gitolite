@@ -8,14 +8,6 @@ class gitolite::package (
 
   include gitolite::package::params
 
-  user { $user: 
-    ensure => present, 
-    system => true, 
-    gid => $group,
-    home => $path,
-  }
-
-  group { $group: ensure => present, system => true, }
 
   $package = $gitolite::package::params::package
 
@@ -24,6 +16,15 @@ class gitolite::package (
   ##
 
   if 'debian' == $::osfamily {
+
+    user { $user: 
+      ensure => present, 
+      system => true, 
+      gid => $group,
+      home => $path,
+    }
+    group { $group: ensure => present, system => true, }
+
     $preseed = $gitolite::package::params::preseed
 
     file { $path: 
@@ -61,21 +62,32 @@ class gitolite::package (
       } -> yumrepo { 'epel': enabled => '1', }
     }
 
-    file { $path: ensure => symlink, target => '/var/lib/gitolite', }
-
     package { $package: ensure => present, }
+ 
+    Exec { path => ['/sbin','/bin','/usr/bin','/usr/sbin'], }
+
+    exec { "rename gitolite user to $user": 
+      command => "usermod -m -d $gitolite::path -l $user gitolite",
+      unless => 'getent passwd git',
+      require => Exec['configure gitolite admin'],
+    } 
+
+    exec { "rename gitolite group to $group": 
+      command => "groupmod -n $group gitolite",
+      unless => 'getent group git',
+      require => Exec['configure gitolite admin'],
+    } 
 
     file { $gitolite::package::params::admin_pub_key_file:
-      owner => 'gitolite',
-      group => 'gitolite',
-      content => $admin_pub_key,
-      require => Package[$package],
-    }
-
-    exec { 'configure admin access to gitolite':
+      ensure => file,
+      content => $gitolite::admin_pub_key,
+    } -> exec { 'configure gitolite admin':
       path => ['/bin','/sbin','/usr/bin','/usr/sbin'],
-      command => "gl-setup $gitolite::package::params::admin_pub_key_file",
-      require => [Package[$package], File[$gitolite::package::params::admin_pub_key_file]],
+      environment => ["HOME=/var/lib/gitolite"],
+      user => 'gitolite',
+      command => "gl-setup -q $gitolite::package::params::admin_pub_key_file > /tmp/foo 2>&1",
+      require => Package[$package],
+      unless => "test -s $gitolite::path/.ssh/authorized_keys",
     }
   }
 }
