@@ -8,7 +8,6 @@ class gitolite::package (
 
   include gitolite::package::params
 
-
   $package = $gitolite::package::params::package
 
   ##
@@ -54,17 +53,29 @@ class gitolite::package (
   ## 
 
   if ('redhat' == $::osfamily) {
+
+    Exec { path => ['/sbin','/bin','/usr/bin','/usr/sbin'], }
+
     if (true == $enable_third_party_package_repo) {
+ 
       package { 'epel-release':
         ensure => present,
         provider => 'rpm',
 	source => $gitolite::package::params::epel_url,
-      } -> yumrepo { 'epel': enabled => '1', }
-    }
+      } 
 
-    package { $package: ensure => present, }
- 
-    Exec { path => ['/sbin','/bin','/usr/bin','/usr/sbin'], }
+      yumrepo { 'epel': 
+        enabled => '1',
+        require => Package['epel-release'],
+      }
+
+      package { $package:
+        ensure => present,
+        require => Yumrepo['epel'],
+      }
+    } else {
+      package { $package: ensure => present, }
+    }
 
     exec { "rename gitolite user to $user": 
       command => "usermod -m -d $gitolite::path -l $user gitolite",
@@ -84,8 +95,7 @@ class gitolite::package (
     } -> exec { 'configure gitolite admin':
       path => ['/bin','/sbin','/usr/bin','/usr/sbin'],
       environment => ["HOME=/var/lib/gitolite"],
-      user => 'gitolite',
-      command => "gl-setup -q $gitolite::package::params::admin_pub_key_file > /tmp/foo 2>&1",
+      command => "su -l gitolite -c \'gl-setup -q $gitolite::package::params::admin_pub_key_file\'",
       require => Package[$package],
       unless => "test -s $gitolite::path/.ssh/authorized_keys",
     }

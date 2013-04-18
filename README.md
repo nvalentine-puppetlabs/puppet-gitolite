@@ -2,7 +2,7 @@
 
 Install and configure gitolite.
 
-Currently only Debian ::osfamily supported.
+Currently only supports ::osfamily Debian & RedHat and only version 6.4 of RedHat.
 
 ## Usage 
 
