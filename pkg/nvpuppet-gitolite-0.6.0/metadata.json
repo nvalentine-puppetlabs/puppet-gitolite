@@ -1,0 +1,29 @@
+{
+  "author": "nathan@puppetlabs.com",
+  "source": "git://github.com/nvalentine-puppetlabs/puppet-gitolite.git",
+  "description": "Install and configure gitolite",
+  "types": [
+
+  ],
+  "project_page": "http://github.com/nvalentine-puppetlabs/puppet-gitolite",
+  "checksums": {
+    "manifests/package.pp": "ce8261a752510fd2e3580aa9f9a84ae7",
+    "tests/testkey_rsa.pub": "aea291dc2b5d3a5b7f452f836d77f5cf",
+    "README.md": "4ed7b591df795c1a62dada773236d5f7",
+    "templates/Debian/gitolite.preseed.erb": "c7b1518cc1106bc2e735d1dd453396da",
+    "spec/spec_helper.rb": "a55d1e6483344f8ec6963fcb2c220372",
+    "manifests/init.pp": "1578a0d0813abfd87b1c3f54861ca255",
+    "manifests/params.pp": "a0201b10bd0d50081b84d5b120f56568",
+    "manifests/package/params.pp": "4f8d9db93c7709dfd6162e4d1104d76b",
+    "tests/init.pp": "46de0a11e57616addbc212234a867e65",
+    "tests/testkey_rsa": "cca1d9f432531b7a904faa68990ae101",
+    "Modulefile": "c7ee4ac41cedcaeb88ef964d1efe193b"
+  },
+  "license": "Apache License, Version 2.0",
+  "name": "nvpuppet-gitolite",
+  "dependencies": [
+
+  ],
+  "version": "0.6.0",
+  "summary": "Install and configure gitolite"
+}
