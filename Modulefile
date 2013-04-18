@@ -1,5 +1,5 @@
 name    'nvpuppet-gitolite'
-version '0.5.0'
+version '0.6.0'
 source 'git://github.com/nvalentine-puppetlabs/puppet-gitolite.git'
 author 'nathan@puppetlabs.com'
 license 'Apache License, Version 2.0'
